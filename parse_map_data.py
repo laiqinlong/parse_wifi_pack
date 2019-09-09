@@ -1,3 +1,4 @@
+from map_display import show_map
 def str2bin(num):
     test_flag=0
     if test_flag:
@@ -42,23 +43,31 @@ def parse_point_data(bin_list):
             temp.append(str(int(bin_list[i]+bin_list[i+1],2)))
     return temp
 
-
+def reset_limit(x1,y1,x2,y2):
+    if a.x_min > x1:
+        a.x_min = x1
+    if a.x_max < x2:
+        a.x_max = x2
+    if a.y_min > y1:
+        a.y_min = y1
+    if a.y_max < y2:
+        a.y_max = y2
 def num_type(x1,y1,x2,y2,point_list,f_write):
     num_i = 0
-    x1 = x1 - 512
-    x2 = x2 - 512
-    y1 = y1 - 512
-    y2 = y2 - 512
+    reset_limit(x1, y1, x2, y2)
     for i in range(x1, x2 ):
         for j in range(y1, y2 ):
             if(point_list[num_i]== '0'):
-                temp_line = "$A" + '%d,%d!\n'%(i,j)
+                temp_line = "$A" + '%d,%d!\n'%(i-512, j-512)
             if (point_list[num_i] == '1'):
-                temp_line = "$F" + '%d,%d!\n'%(i,j)
+                a.show_green(i,j)
+                temp_line = "$F" + '%d,%d!\n'%(i-512, j-512)
             if (point_list[num_i] == '2'):
-                temp_line = "$B" + '%d,%d!\n'%(i,j)
+                a.show_red(i, j)
+                temp_line = "$B" + '%d,%d!\n'%(i-512, j-512)
             if (point_list[num_i] == '3'):
-                temp_line = "$C" + '%d,%d!\n'%(i,j)
+                a.show_yellow(i,j)
+                temp_line = "$C" + '%d,%d!\n'%(i-512, j-512)
             num_i = num_i + 1
             f_write.writelines(temp_line)
 def new_whole_map(line):
@@ -114,11 +123,13 @@ if __name__ == '__main__':
     f_open=open('test.txt','r',encoding='utf8')
     f_write = open('write.txt', 'w')
     f_test = open('data.txt','w')
+    a=show_map(1024)
     for line in f_open:
         line=line[10:]
         line=line.replace('new map debug:','')
         f_test.writelines(line)
         new_whole_map(line)
+    a.show()
     f_write.close()
     '''
     test_case = [0x0, 0x0, 0x0, 0x43, 0x1f, 0x0, 0x44, 0x51, 0x8, 0x5, 0x47, 0x82, 0x46, 0xe1, 0x43, 0x3]
