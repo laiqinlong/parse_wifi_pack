@@ -52,7 +52,17 @@ def reset_limit(x1,y1,x2,y2):
         a.y_min = y1
     if a.y_max < y2:
         a.y_max = y2
+
+
 def num_type(x1,y1,x2,y2,point_list,f_write):
+    '''
+    是带了障碍点的
+    :param x1, y1:左上的坐标
+    :param x2，y2:右下的坐标
+    :param point_list: 数组
+    :param f_write: 写入的文件
+    :return: 没有
+    '''
     num_i = 0
     reset_limit(x1, y1, x2, y2)
     for i in range(x1, x2 ):
@@ -70,7 +80,35 @@ def num_type(x1,y1,x2,y2,point_list,f_write):
                 temp_line = "$C" + '%d,%d!\n'%(i-512, j-512)
             num_i = num_i + 1
             f_write.writelines(temp_line)
+
+
+def num_type_no_bump(x1, y1, x2, y2, point_list, f_write):
+    '''
+    是带了障碍点的
+    :param x1, y1:左上的坐标
+    :param x2，y2:右下的坐标
+    :param point_list: 数组,'0','1'
+    :param f_write: 写入的文件
+    :return: 没有
+    '''
+    num_i = 0
+    reset_limit(x1, y1, x2, y2)
+    for i in range(x1, x2):
+        for j in range(y1, y2):
+            if (point_list[num_i] == '0'):
+                temp_line = "$A" + '%d,%d!\n' % (i - 512, j - 512)
+            if (point_list[num_i] == '1'):
+                a.show_green(i, j)
+                temp_line = "$F" + '%d,%d!\n' % (i - 512, j - 512)
+            num_i = num_i + 1
+            f_write.writelines(temp_line)
+
+
 def new_whole_map(line):
+    '''
+    :param line:新的地图协议，开头是line_index
+    :return:
+    '''
     print(line.split(','))
     line.replace('\n','')
     line=line.split(' ')
@@ -120,6 +158,18 @@ def new_whole_map(line):
 
 
 if __name__ == '__main__':
+    f_open = open('test.txt', 'r', encoding='utf8')
+    f_write = open('write.txt', 'w')
+    f_test = open('data.txt', 'w')
+    a = show_map(1024)
+    for line in f_open:
+        line = line[10:]
+        line = line.replace('new map debug:', '')
+        f_test.writelines(line)
+        new_whole_map(line)
+    a.show()
+    f_write.close()
+    '''
     f_open=open('test.txt','r',encoding='utf8')
     f_write = open('write.txt', 'w')
     f_test = open('data.txt','w')
@@ -131,6 +181,10 @@ if __name__ == '__main__':
         new_whole_map(line)
     a.show()
     f_write.close()
+    '''
+
+
+
     '''
     test_case = [0x0, 0x0, 0x0, 0x43, 0x1f, 0x0, 0x44, 0x51, 0x8, 0x5, 0x47, 0x82, 0x46, 0xe1, 0x43, 0x3]
     test_case = str(test_case)
